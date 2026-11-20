@@ -1,0 +1,477 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ---------- Hero ----------
+.hero {
+  @include ink-band;
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(var(--nav-height) + #{$space-7});
+  padding-bottom: $space-7;
+
+  @include up(lg) {
+    padding-top: calc(var(--nav-height) + #{$space-9});
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, rgba(250, 249, 246, 0.05) 1px, transparent 1px);
+    background-size: calc(100% / 6) 100%;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -20vw;
+    top: -10vw;
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(230, 57, 70, 0.22), transparent 62%);
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__grid {
+    display: grid;
+    gap: $space-7;
+    align-items: end;
+
+    @include up(lg) {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+      gap: $space-8;
+    }
+  }
+
+  .eyebrow {
+    color: var(--color-text-on-ink-muted);
+    margin-bottom: $space-5;
+  }
+
+  &__accent {
+    color: var(--color-accent);
+  }
+
+  &__lead {
+    margin-top: $space-5;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    margin-top: $space-6;
+
+    .btn {
+      @include down(sm) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Decorative live report card
+.report {
+  padding: $space-5;
+  border: 1px solid var(--color-ink-line);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, rgba(250, 249, 246, 0.06), rgba(250, 249, 246, 0.02));
+  backdrop-filter: blur(6px);
+  animation-delay: 120ms;
+
+  @include up(md) {
+    padding: $space-6;
+  }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-3;
+    font-size: 0.75rem;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  &__live {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    @include eyebrow;
+    font-size: 0.7rem;
+    color: var(--color-text-on-ink);
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-growth-on-ink);
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+    animation: pulse 2s infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  &__main {
+    display: grid;
+    gap: $space-1;
+    margin-top: $space-6;
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  &__value {
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    font-weight: 600;
+    line-height: 1.05;
+  }
+
+  &__delta {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: 0.85rem;
+    color: var(--color-growth-on-ink);
+  }
+
+  &__chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 110px;
+    margin-top: $space-5;
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--color-ink-line);
+
+    span {
+      flex: 1;
+      background: rgba(250, 249, 246, 0.16);
+      border-radius: 2px 2px 0 0;
+      transform-origin: bottom;
+      animation: grow 900ms $ease-out both;
+
+      @for $i from 1 through 12 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{200 + $i * 45}ms;
+        }
+      }
+
+      &.is-last {
+        background: var(--color-accent);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: $space-5 0 0;
+
+    div + div {
+      padding-left: $space-3;
+      border-left: 1px solid var(--color-ink-line);
+    }
+
+    dt {
+      font-size: 0.75rem;
+      color: var(--color-text-on-ink-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+
+      &.text-growth {
+        color: var(--color-growth-on-ink);
+      }
+    }
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 8px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+// Trust metrics strip
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: $space-8 0 0;
+  border-top: 1px solid var(--color-ink-line);
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: $space-1;
+    padding: $space-5 $space-4 0 0;
+
+    &:nth-child(even) {
+      padding-left: $space-4;
+      border-left: 1px solid var(--color-ink-line);
+    }
+
+    @include up(lg) {
+      &:not(:first-child) {
+        padding-left: $space-5;
+        border-left: 1px solid var(--color-ink-line);
+      }
+    }
+
+    dt {
+      font-size: 0.85rem;
+      color: var(--color-text-on-ink-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.04em;
+
+      &.is-growth {
+        color: var(--color-growth-on-ink);
+      }
+    }
+  }
+}
+
+.partners {
+  @include reset-list;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3 $space-6;
+  margin-top: $space-7;
+  padding-top: $space-5;
+  border-top: 1px solid var(--color-ink-line);
+  font-size: 0.85rem;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  app-icon {
+    color: var(--color-growth-on-ink);
+  }
+
+  strong {
+    color: var(--color-text-on-ink);
+    font-weight: 600;
+  }
+}
+
+// ---------- Shared section bits ----------
+.section-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $space-6;
+}
+
+.section-head--ink {
+  .eyebrow,
+  .lead {
+    color: var(--color-text-on-ink-muted);
+  }
+}
+
+.skeleton--card {
+  height: 440px;
+}
+
+.skeleton--case {
+  height: 520px;
+}
+
+// ---------- Workflow steps ----------
+.steps {
+  @include reset-list;
+  display: grid;
+  border-top: 1px solid var(--color-ink-line);
+  counter-reset: steps;
+
+  @include up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include up(xl) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    padding: $space-6 0;
+    border-bottom: 1px solid var(--color-ink-line);
+    transition: background-color $duration-base ease;
+
+    @include up(md) {
+      padding: $space-6;
+
+      &:nth-child(odd) {
+        padding-left: 0;
+      }
+
+      &:nth-child(even) {
+        border-left: 1px solid var(--color-ink-line);
+      }
+    }
+
+    @include up(xl) {
+      border-bottom: 0;
+
+      &:nth-child(odd) {
+        padding-left: $space-6;
+      }
+
+      &:first-child {
+        padding-left: 0;
+      }
+
+      & + & {
+        border-left: 1px solid var(--color-ink-line);
+      }
+    }
+
+    &:hover .steps__num {
+      color: var(--color-accent);
+    }
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  &__num {
+    font-size: 3rem;
+    font-weight: 600;
+    line-height: 1;
+    color: rgba(250, 249, 246, 0.28);
+    transition: color $duration-base ease;
+  }
+
+  &__time {
+    font-size: 0.75rem;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  &__title {
+    font-size: 1.3rem;
+    line-height: 1.2;
+  }
+
+  &__desc {
+    font-size: 0.93rem;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  &__outputs {
+    @include reset-list;
+    display: grid;
+    gap: $space-2;
+    margin-top: auto;
+    padding-top: $space-3;
+    font-size: 0.85rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+    }
+
+    app-icon {
+      color: var(--color-growth-on-ink);
+    }
+  }
+}
+
+// ---------- Testimonials ----------
+.testimonials {
+  display: grid;
+  gap: $space-5;
+
+  @include up(lg) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.quote {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  margin: 0;
+  padding: $space-6;
+
+  &__metric {
+    display: flex;
+    align-items: baseline;
+    gap: $space-2;
+    padding-bottom: $space-4;
+    border-bottom: 1px solid var(--color-border);
+
+    strong {
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    span {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+    }
+  }
+
+  blockquote {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  figcaption {
+    display: grid;
+    margin-top: auto;
+    font-size: 0.88rem;
+
+    span {
+      color: var(--color-text-muted);
+    }
+  }
+}

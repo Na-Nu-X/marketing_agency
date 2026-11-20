@@ -1,0 +1,244 @@
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy reveal">
+      <p class="eyebrow">{{ site.tagline }} · {{ site.address.city }}</p>
+      <h1 class="display-xl hero__title">
+        Marketing, ktorý sa meria v <span class="hero__accent">eurách</span>, nie v lajkoch.
+      </h1>
+      <p class="lead hero__lead">
+        Spájame výkonnostné kampane, SEO, sociálne siete a kreatívu pod jednou strechou. Každé euro v reklame
+        musí zarobiť viac, než stojí – a vy to uvidíte v transparentnom reportingu.
+      </p>
+      <div class="hero__ctas">
+        <a class="btn btn--primary btn--lg" routerLink="/kontakt">
+          Získať ponuku na mieru <app-icon name="arrow-right" [size]="18" />
+        </a>
+        <a class="btn btn--outline-light btn--lg" routerLink="/kontakt" [queryParams]="{ tab: 'audit' }">
+          Bezplatný audit kampaní
+        </a>
+      </div>
+    </div>
+
+    <aside class="report reveal" aria-label="Ukážka reportu z kampaní">
+      <header class="report__head">
+        <span class="report__live"><span class="report__dot"></span> Live report</span>
+        <span class="mono">E-commerce · 12 mesiacov</span>
+      </header>
+      <div class="report__main">
+        <span class="report__label">Mesačné tržby z kampaní</span>
+        <strong class="report__value mono">131 400 €</strong>
+        <span class="report__delta mono"><app-icon name="trending-up" [size]="16" /> +245 % medziročne</span>
+      </div>
+      <div class="report__chart" aria-hidden="true">
+        @for (h of chartBars; track $index; let last = $last) {
+          <span [style.height.%]="h" [class.is-last]="last"></span>
+        }
+      </div>
+      <dl class="report__stats">
+        <div>
+          <dt>ROAS</dt>
+          <dd class="mono text-growth">8.6×</dd>
+        </div>
+        <div>
+          <dt>PNO</dt>
+          <dd class="mono">11.6 %</dd>
+        </div>
+        <div>
+          <dt>Noví zákazníci</dt>
+          <dd class="mono">+4 120</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+
+  <div class="container">
+    <dl class="metrics">
+      @for (metric of site.trustMetrics; track metric.label) {
+        <div class="metrics__item">
+          <dt>{{ metric.label }}</dt>
+          <dd class="mono" [class.is-growth]="metric.growth">{{ metric.value }}</dd>
+        </div>
+      }
+    </dl>
+    <ul class="partners" aria-label="Partnerské certifikácie">
+      @for (partner of site.partners; track partner.name) {
+        <li>
+          <app-icon name="award" [size]="18" />
+          <strong>{{ partner.name }}</strong>
+          <span>{{ partner.status }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" aria-labelledby="services-title">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow eyebrow--accent">Služby</p>
+        <h2 id="services-title" class="display-lg">Naše služby pre&nbsp;váš rast</h2>
+      </div>
+      <p class="lead">
+        Od prvého kliku po opakovaný nákup. Vyberte si jednu službu, alebo nám zverte celý rastový lievik.
+      </p>
+    </div>
+
+    @switch (services.state().status) {
+      @case ('loading') {
+        <div class="grid grid--3">
+          @for (s of skeletons; track s) {
+            <div class="skeleton skeleton--card"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="state-box">
+          <p>Služby sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znova.</p>
+          <button type="button" class="btn btn--outline" (click)="services.reload()">
+            <app-icon name="refresh" [size]="16" /> Skúsiť znova
+          </button>
+        </div>
+      }
+      @case ('success') {
+        <div class="grid grid--3">
+          @for (service of services.data(); track service.id; let i = $index) {
+            <app-service-card [service]="service" [index]="i" />
+          }
+        </div>
+      }
+    }
+
+    <div class="section-foot">
+      <a class="link-arrow" routerLink="/sluzby">Všetky služby a cenník <app-icon name="arrow-right" [size]="16" /></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASE STUDIES ============ -->
+<section class="section section--soft" aria-labelledby="cases-title">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow eyebrow--accent">Prípadové štúdie</p>
+        <h2 id="cases-title" class="display-lg">Overené výsledky</h2>
+      </div>
+      <p class="lead">
+        Žiadne prázdne sľuby. Pozrite sa, ako sme pomohli e-shopom, B2B firmám aj lokálnym značkám rásť – v číslach.
+      </p>
+    </div>
+
+    @switch (caseStudies.state().status) {
+      @case ('loading') {
+        <div class="grid grid--2">
+          @for (s of [0, 1]; track s) {
+            <div class="skeleton skeleton--case"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="state-box">
+          <p>Prípadové štúdie sa nepodarilo načítať.</p>
+          <button type="button" class="btn btn--outline" (click)="caseStudies.reload()">
+            <app-icon name="refresh" [size]="16" /> Skúsiť znova
+          </button>
+        </div>
+      }
+      @case ('success') {
+        <div class="grid grid--2">
+          @for (cs of caseStudies.data(); track cs.id) {
+            <app-case-study-card [caseStudy]="cs" />
+          }
+        </div>
+      }
+    }
+
+    <div class="section-foot">
+      <a class="link-arrow" routerLink="/pripadove-studie">
+        Všetky prípadové štúdie <app-icon name="arrow-right" [size]="16" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROI ESTIMATOR ============ -->
+<section class="section" id="kalkulacka" aria-labelledby="estimator-title">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow eyebrow--accent">Kalkulačka rastu</p>
+        <h2 id="estimator-title" class="display-lg">Koľko môžu zarobiť vaše kampane?</h2>
+      </div>
+      <p class="lead">
+        Nastavte typ biznisu, rozpočet a hodnotu objednávky. Projekcia vychádza z benchmarkov účtov, ktoré
+        spravujeme na slovenskom a českom trhu.
+      </p>
+    </div>
+    <app-campaign-roi-estimator />
+  </div>
+</section>
+
+<!-- ============ WORKFLOW ============ -->
+<section class="section section--ink" aria-labelledby="workflow-title">
+  <div class="container">
+    <div class="section-head section-head--ink">
+      <div>
+        <p class="eyebrow">Ako pracujeme</p>
+        <h2 id="workflow-title" class="display-lg">Štyri kroky od auditu k&nbsp;zisku</h2>
+      </div>
+      <p class="lead">
+        Jasný proces, merateľné míľniky a žiadne prekvapenia. Prvé výsledky vidíte spravidla do 6 týždňov.
+      </p>
+    </div>
+
+    <ol class="steps">
+      @for (step of steps; track step.title; let i = $index) {
+        <li class="steps__item">
+          <div class="steps__top">
+            <span class="steps__num mono">0{{ i + 1 }}</span>
+            <span class="steps__time mono">{{ step.duration }}</span>
+          </div>
+          <h3 class="steps__title">{{ step.title }}</h3>
+          <p class="steps__desc">{{ step.description }}</p>
+          <ul class="steps__outputs">
+            @for (output of step.outputs; track output) {
+              <li><app-icon name="check" [size]="14" [strokeWidth]="2.5" /> {{ output }}</li>
+            }
+          </ul>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" aria-labelledby="testimonials-title">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow eyebrow--accent">Referencie</p>
+        <h2 id="testimonials-title" class="display-lg">Čo hovoria naši klienti</h2>
+      </div>
+    </div>
+
+    <div class="testimonials">
+      @for (t of testimonials; track t.author) {
+        <figure class="quote">
+          <div class="quote__metric">
+            <strong class="mono text-growth">{{ t.metric }}</strong>
+            <span>{{ t.metricLabel }}</span>
+          </div>
+          <blockquote>
+            <p>„{{ t.quote }}“</p>
+          </blockquote>
+          <figcaption>
+            <strong>{{ t.author }}</strong>
+            <span>{{ t.role }}, {{ t.company }}</span>
+          </figcaption>
+        </figure>
+      }
+    </div>
+  </div>
+</section>
