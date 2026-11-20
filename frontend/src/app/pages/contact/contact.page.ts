@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  Injector,
   WritableSignal,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -90,6 +92,7 @@ export class ContactPage {
   private readonly router = inject(Router);
   private readonly drafts = inject(ProposalDraftService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
 
   protected readonly site = SITE_CONFIG;
   protected readonly budgetOptions = MONTHLY_BUDGET_OPTIONS;
@@ -335,16 +338,23 @@ export class ContactPage {
     this.focusFirstInvalid();
   }
 
+  /** Runs after the next render so error classes / success panels exist in the DOM. */
+  private afterRender(fn: () => void): void {
+    afterNextRender(fn, { injector: this.injector });
+  }
+
   private focusFirstInvalid(): void {
-    queueMicrotask(() =>
+    this.afterRender(() =>
       this.host.nativeElement
-        .querySelector<HTMLElement>('[role="tabpanel"]:not([hidden]) .is-invalid, [role="tabpanel"]:not([hidden]) [aria-invalid="true"]')
+        .querySelector<HTMLElement>(
+          '[role="tabpanel"]:not([hidden]) [aria-invalid="true"], [role="tabpanel"]:not([hidden]) .is-invalid',
+        )
         ?.focus(),
     );
   }
 
   private scrollToForm(): void {
-    queueMicrotask(() =>
+    this.afterRender(() =>
       this.host.nativeElement.querySelector('.conversion')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
     );
   }

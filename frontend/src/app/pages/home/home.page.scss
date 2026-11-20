@@ -45,7 +45,7 @@
     align-items: end;
 
     @include up(lg) {
-      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
       gap: $space-8;
     }
   }

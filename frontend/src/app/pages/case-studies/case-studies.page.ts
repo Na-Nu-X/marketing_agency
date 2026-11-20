@@ -51,7 +51,7 @@ export class CaseStudiesPage {
       if (existing) existing.count++;
       else byCategory.set(cs.category.id, { ...cs.category, count: 1 });
     }
-    return [...byCategory.values()];
+    return [...byCategory.values()].sort((a, b) => a.id - b.id);
   });
 
   protected readonly totalCount = computed(() => this.all.data()?.length ?? 0);
