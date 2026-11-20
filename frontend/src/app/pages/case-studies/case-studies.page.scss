@@ -1,0 +1,75 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.hero-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 720px;
+  margin: $space-7 0 0;
+  border-top: 1px solid var(--color-ink-line);
+
+  div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding-top: $space-4;
+
+    & + div {
+      padding-left: $space-4;
+      border-left: 1px solid var(--color-ink-line);
+    }
+  }
+
+  dt {
+    font-size: 0.8rem;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1.1;
+
+    &.is-growth {
+      color: var(--color-growth-on-ink);
+    }
+  }
+}
+
+.filters {
+  margin-bottom: $space-6;
+  padding-bottom: $space-5;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.list {
+  display: grid;
+  gap: $space-6;
+
+  @include up(xl) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  app-case-study-card {
+    scroll-margin-top: calc(var(--nav-height) + #{$space-5});
+  }
+}
+
+.skeleton--case {
+  height: 640px;
+}
+
+.cta-strip {
+  display: grid;
+  gap: $space-5;
+
+  @include up(lg) {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: $space-8;
+  }
+
+  .lead {
+    margin-top: $space-3;
+  }
+}

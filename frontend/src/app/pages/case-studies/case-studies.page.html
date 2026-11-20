@@ -1,0 +1,94 @@
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Prípadové štúdie</p>
+    <h1 class="display-xl">Výsledky, ktoré sa dajú <span class="text-accent">spočítať.</span></h1>
+    <p class="lead">
+      Reálne príbehy značiek, ktorým sme pomohli rásť. Každá štúdia ukazuje výzvu, zvolenú stratégiu a čísla, ktoré
+      sme dosiahli.
+    </p>
+    <dl class="hero-kpis">
+      <div>
+        <dt>tržby e-shopu</dt>
+        <dd class="mono">+245 %</dd>
+      </div>
+      <div>
+        <dt>priemerné ROAS</dt>
+        <dd class="mono is-growth">8.6×</dd>
+      </div>
+      <div>
+        <dt>cena za lead</dt>
+        <dd class="mono is-growth">−42 %</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="chip-row filters" role="group" aria-label="Filtrovať podľa marketingového kanála">
+      <button type="button" class="chip" [attr.aria-pressed]="!category()" (click)="selectCategory(null)">
+        Všetky
+        @if (totalCount()) {
+          <span class="count">{{ totalCount() }}</span>
+        }
+      </button>
+      @for (filter of filters(); track filter.id) {
+        <button
+          type="button"
+          class="chip"
+          [attr.aria-pressed]="category() === filter.slug"
+          (click)="selectCategory(filter.slug)"
+        >
+          <app-icon [name]="filter.icon_name" [size]="16" />
+          {{ filter.name }}
+          <span class="count">{{ filter.count }}</span>
+        </button>
+      }
+    </div>
+
+    @switch (caseStudies.state().status) {
+      @case ('loading') {
+        <div class="list">
+          @for (s of [0, 1]; track s) {
+            <div class="skeleton skeleton--case"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="state-box">
+          <p>Prípadové štúdie sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znova.</p>
+          <button type="button" class="btn btn--outline" (click)="caseStudies.reload()">
+            <app-icon name="refresh" [size]="16" /> Skúsiť znova
+          </button>
+        </div>
+      }
+      @case ('success') {
+        @if (caseStudies.data()?.length) {
+          <div class="list">
+            @for (cs of caseStudies.data(); track cs.id) {
+              <app-case-study-card [attr.id]="cs.slug" class="reveal" [caseStudy]="cs" variant="full" />
+            }
+          </div>
+        } @else {
+          <div class="state-box">
+            <h2 class="display-sm">V tejto kategórii zatiaľ nemáme zverejnenú štúdiu</h2>
+            <p>Na stretnutí vám radi ukážeme ďalšie výsledky pod NDA.</p>
+            <button type="button" class="btn btn--outline" (click)="selectCategory(null)">Zobraziť všetky</button>
+          </div>
+        }
+      }
+    }
+  </div>
+</section>
+
+<section class="section section--soft">
+  <div class="container cta-strip">
+    <div>
+      <h2 class="display-md">Chcete byť našou ďalšou prípadovou štúdiou?</h2>
+      <p class="lead">Povedzte nám, kde ste dnes a kam chcete rásť. Návrh stratégie a odhad výsledkov je zadarmo.</p>
+    </div>
+    <a class="btn btn--primary btn--lg" routerLink="/kontakt">
+      Nezáväzná ponuka <app-icon name="arrow-right" [size]="18" />
+    </a>
+  </div>
+</section>

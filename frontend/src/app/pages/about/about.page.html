@@ -1,0 +1,133 @@
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">O agentúre</p>
+    <h1 class="display-xl">Dáta a kreatíva <span class="text-accent">pod jednou strechou.</span></h1>
+    <p class="lead">
+      {{ site.agencyName }} je tím performance špecialistov, stratégov, dizajnérov a video tvorcov z Bratislavy. Pomáhame
+      e-shopom, B2B firmám a lokálnym značkám rásť – merateľne a bez zbytočných kompromisov.
+    </p>
+    <dl class="facts">
+      @for (v of values; track v.label) {
+        <div>
+          <dt>{{ v.label }}</dt>
+          <dd class="mono">{{ v.value }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="philosophy-title">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow eyebrow--accent">Naša filozofia</p>
+        <h2 id="philosophy-title" class="display-lg">Ako sa líšime od bežných agentúr</h2>
+      </div>
+      <p class="lead">
+        Neveríme na pekné reporty plné zobrazení. Veríme na rast, ktorý vidíte na účte – a na partnerstvo, v ktorom
+        viete, kto na vašom projekte pracuje.
+      </p>
+    </div>
+
+    <ol class="pillars">
+      @for (pillar of pillars; track pillar.title; let i = $index) {
+        <li class="pillar">
+          <div class="pillar__head">
+            <span class="pillar__icon"><app-icon [name]="pillar.icon" [size]="24" /></span>
+            <span class="mono pillar__num">0{{ i + 1 }}</span>
+          </div>
+          <h3 class="pillar__title">{{ pillar.title }}</h3>
+          <p>{{ pillar.description }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<section class="section section--soft" aria-labelledby="partners-title">
+  <div class="container partners">
+    <div>
+      <p class="eyebrow eyebrow--accent">Certifikácie</p>
+      <h2 id="partners-title" class="display-md">Overení partneri reklamných platforiem</h2>
+      <p class="lead">
+        Partnerské statusy získavajú iba agentúry s overenými výsledkami, certifikovaným tímom a dlhodobo spokojnými
+        klientmi. Pre vás to znamená prístup k beta funkciám a priamu podporu platforiem.
+      </p>
+    </div>
+    <ul class="badges">
+      @for (partner of site.partners; track partner.name) {
+        <li class="badge-card">
+          <app-icon name="award" [size]="28" />
+          <strong>{{ partner.name }}</strong>
+          <span>{{ partner.status }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="team-title">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow eyebrow--accent">Náš tím</p>
+        <h2 id="team-title" class="display-lg">Ľudia, s ktorými budete pracovať</h2>
+      </div>
+      <p class="lead">Žiadni juniori schovaní za account manažérom. Na vašom účte pracujú priamo títo seniori.</p>
+    </div>
+
+    @switch (team.state().status) {
+      @case ('loading') {
+        <div class="team">
+          @for (s of [0, 1, 2, 3]; track s) {
+            <div class="skeleton skeleton--member"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="state-box">
+          <p>Profily tímu sa nepodarilo načítať.</p>
+          <button type="button" class="btn btn--outline" (click)="team.reload()">
+            <app-icon name="refresh" [size]="16" /> Skúsiť znova
+          </button>
+        </div>
+      }
+      @case ('success') {
+        <ul class="team">
+          @for (member of team.data(); track member.id) {
+            <li class="member">
+              <div class="member__photo">
+                <img [src]="member.photo_url" [alt]="member.full_name" loading="lazy" decoding="async" />
+              </div>
+              <div class="member__body">
+                <p class="member__role">{{ member.role_title }}</p>
+                <h3 class="member__name">{{ member.full_name }}</h3>
+                <p class="member__bio">{{ member.bio }}</p>
+                @if (member.certifications) {
+                  <ul class="member__certs" aria-label="Certifikácie">
+                    @for (cert of certifications(member.certifications); track cert) {
+                      <li class="badge">{{ cert }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    }
+  </div>
+</section>
+
+<section class="section section--ink">
+  <div class="container cta-strip">
+    <div>
+      <h2 class="display-md">Spoznajme sa na 30-minútovom hovore</h2>
+      <p class="lead">Bez predajných fráz. Prejdeme vaše ciele a povieme vám úprimne, či a ako vieme pomôcť.</p>
+    </div>
+    <a class="btn btn--primary btn--lg" routerLink="/kontakt">
+      Dohodnúť konzultáciu <app-icon name="arrow-right" [size]="18" />
+    </a>
+  </div>
+</section>
