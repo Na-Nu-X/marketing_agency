@@ -1,0 +1,90 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__cta">
+      <p class="display-lg">Poďme rásť <span class="text-accent">spolu.</span></p>
+      <div class="footer__cta-actions">
+        <a class="btn btn--primary btn--lg" routerLink="/kontakt">
+          Získať ponuku na mieru <app-icon name="arrow-right" [size]="18" />
+        </a>
+        <a class="btn btn--outline-light btn--lg" routerLink="/kontakt" [queryParams]="{ tab: 'audit' }">
+          Bezplatný audit
+        </a>
+      </div>
+    </div>
+
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="footer__wordmark" routerLink="/">
+          {{ site.wordmark }}<span class="text-accent">{{ site.wordmarkAccent }}</span>
+        </a>
+        <p>{{ site.tagline }}</p>
+        <ul class="footer__partners" aria-label="Partnerské certifikácie">
+          @for (partner of site.partners; track partner.name) {
+            <li>
+              <app-icon name="shield" [size]="18" />
+              <span>
+                <strong>{{ partner.name }}</strong>
+                <small>{{ partner.status }}</small>
+              </span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <nav class="footer__col" aria-label="Navigácia v pätičke">
+        <h2>Navigácia</h2>
+        <ul>
+          @for (link of navigation; track link.path) {
+            <li><a [routerLink]="link.path">{{ link.label }}</a></li>
+          }
+        </ul>
+      </nav>
+
+      <nav class="footer__col" aria-label="Služby">
+        <h2>Služby</h2>
+        <ul>
+          @for (link of serviceLinks; track link.category) {
+            <li>
+              <a routerLink="/sluzby" [queryParams]="{ kategoria: link.category }">{{ link.label }}</a>
+            </li>
+          }
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <h2>Kontakt</h2>
+        <address>
+          <a [href]="site.address.mapUrl" target="_blank" rel="noopener">
+            {{ site.address.street }}<br />
+            {{ site.address.postalCode }} {{ site.address.city }}
+          </a>
+          <a class="mono" [href]="'tel:' + site.contact.phoneHref">{{ site.contact.phone }}</a>
+          <a [href]="'mailto:' + site.contact.newBusinessEmail">{{ site.contact.newBusinessEmail }}</a>
+        </address>
+        <ul class="footer__socials" aria-label="Sociálne siete">
+          @for (social of site.socials; track social.network) {
+            <li>
+              <a [href]="social.url" target="_blank" rel="noopener" [attr.aria-label]="social.label">
+                <app-icon [name]="social.network" [size]="18" />
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <div>
+        <p>
+          © {{ year }} {{ site.legal.companyName }} · IČO: <span class="mono">{{ site.legal.ico }}</span> · DIČ:
+          <span class="mono">{{ site.legal.dic }}</span> · IČ DPH: <span class="mono">{{ site.legal.icDph }}</span>
+        </p>
+        <p>{{ site.legal.registry }}</p>
+      </div>
+      <p class="footer__gdpr">
+        <app-icon name="shield" [size]="16" />
+        <span>{{ site.gdprNotice }}</span>
+      </p>
+    </div>
+  </div>
+</footer>

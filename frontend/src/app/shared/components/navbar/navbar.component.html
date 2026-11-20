@@ -1,0 +1,72 @@
+<header class="navbar">
+  <div class="navbar__inner">
+    <a class="wordmark" routerLink="/" [attr.aria-label]="site.agencyName + ' – domov'">
+      {{ site.wordmark }}<span class="wordmark__accent">{{ site.wordmarkAccent }}</span>
+    </a>
+
+    <nav class="navbar__nav" aria-label="Hlavná navigácia">
+      <ul>
+        @for (link of links; track link.label) {
+          <li>
+            <a
+              [routerLink]="link.path"
+              [queryParams]="link.queryParams"
+              routerLinkActive="is-active"
+              [routerLinkActiveOptions]="link.queryParams ? exactMatch : subsetMatch"
+              >{{ link.label }}</a
+            >
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="navbar__actions">
+      <a class="navbar__phone" [href]="'tel:' + site.contact.phoneHref">
+        <app-icon name="phone" [size]="16" />
+        <span>{{ site.contact.phone }}</span>
+      </a>
+      <a class="btn btn--primary navbar__cta" routerLink="/kontakt">Nezáväzná ponuka</a>
+      <button
+        type="button"
+        class="navbar__toggle"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="mobile-drawer"
+        [attr.aria-label]="menuOpen() ? 'Zavrieť menu' : 'Otvoriť menu'"
+        (click)="toggleMenu()"
+      >
+        <app-icon [name]="menuOpen() ? 'close' : 'menu'" [size]="24" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div
+  id="mobile-drawer"
+  class="drawer"
+  [class.is-open]="menuOpen()"
+  [attr.aria-hidden]="!menuOpen()"
+  [attr.inert]="menuOpen() ? null : ''"
+>
+  <nav aria-label="Mobilná navigácia">
+    <ol class="drawer__links">
+      @for (link of links; track link.label; let i = $index) {
+        <li [style.--i]="i">
+          <a [routerLink]="link.path" [queryParams]="link.queryParams">
+            <span class="drawer__index">0{{ i + 1 }}</span>
+            {{ link.label }}
+          </a>
+        </li>
+      }
+    </ol>
+  </nav>
+
+  <div class="drawer__footer">
+    <a class="btn btn--primary btn--lg btn--block" routerLink="/kontakt">
+      Nezáväzná ponuka <app-icon name="arrow-right" [size]="18" />
+    </a>
+    <div class="drawer__contact">
+      <a [href]="'tel:' + site.contact.phoneHref">{{ site.contact.phone }}</a>
+      <a [href]="'mailto:' + site.contact.newBusinessEmail">{{ site.contact.newBusinessEmail }}</a>
+    </div>
+  </div>
+</div>

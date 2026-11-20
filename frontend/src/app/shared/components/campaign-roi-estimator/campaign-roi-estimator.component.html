@@ -1,0 +1,128 @@
+<div class="estimator">
+  <div class="estimator__controls">
+    <fieldset class="control">
+      <legend class="control__label"><span class="control__num mono">01</span> Odvetvie / Typ biznisu</legend>
+      <div class="segmented" role="radiogroup" aria-label="Odvetvie / Typ biznisu" (keydown)="onSegmentKeydown($event)">
+        @for (p of profiles; track p.id) {
+          <button
+            type="button"
+            role="radio"
+            class="segmented__option"
+            [attr.aria-checked]="businessType() === p.id"
+            [attr.tabindex]="businessType() === p.id ? 0 : -1"
+            (click)="selectBusinessType(p.id)"
+          >
+            {{ p.label }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <div class="control">
+      <div class="control__row">
+        <label class="control__label" for="roi-budget">
+          <span class="control__num mono">02</span> Plánovaný mesačný kredit do reklamy
+        </label>
+        <output class="control__value mono" for="roi-budget">{{ formatted().budget }}</output>
+      </div>
+      <input
+        id="roi-budget"
+        class="range"
+        type="range"
+        [min]="budgetRange.min"
+        [max]="budgetRange.max"
+        [step]="budgetRange.step"
+        [value]="monthlyBudget()"
+        [style.--fill]="budgetFill()"
+        [attr.aria-valuetext]="formatted().budget + ' mesačne'"
+        (input)="onBudgetInput($event)"
+      />
+      <div class="control__scale mono" aria-hidden="true">
+        <span>500 €</span><span>25 000 €</span>
+      </div>
+    </div>
+
+    <div class="control">
+      <div class="control__row">
+        <label class="control__label" for="roi-aov">
+          <span class="control__num mono">03</span> Priemerná hodnota objednávky / jedného zákazníka
+        </label>
+        <output class="control__value mono" for="roi-aov">{{ formatted().orderValue }}</output>
+      </div>
+      <input
+        id="roi-aov"
+        class="range"
+        type="range"
+        [min]="orderValueRange.min"
+        [max]="orderValueRange.max"
+        [step]="orderValueRange.step"
+        [value]="averageOrderValue()"
+        [style.--fill]="orderValueFill()"
+        [attr.aria-valuetext]="formatted().orderValue"
+        (input)="onOrderValueInput($event)"
+      />
+      <div class="control__scale mono" aria-hidden="true">
+        <span>25 €</span><span>500 €</span>
+      </div>
+    </div>
+
+    <dl class="estimator__funnel" aria-label="Predpokladaný lievik kampaní">
+      <div>
+        <dt>Zobrazenia</dt>
+        <dd class="mono">{{ formatted().impressions }}</dd>
+      </div>
+      <div>
+        <dt>Kliknutia</dt>
+        <dd class="mono">{{ formatted().clicks }}</dd>
+      </div>
+      <div>
+        <dt>Konverzný pomer</dt>
+        <dd class="mono">{{ formatted().conversionRate }}</dd>
+      </div>
+      <div>
+        <dt>Cena za {{ businessType() === 'ecommerce' ? 'objednávku' : 'dopyt' }}</dt>
+        <dd class="mono">{{ formatted().costPerConversion }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="estimator__results" aria-live="polite">
+    <p class="estimator__results-label">Projekcia na mesiac · {{ profile().shortLabel }}</p>
+
+    <div class="result result--hero">
+      <span class="result__label">Odhadovaný mesačný obrat z kampaní</span>
+      <strong class="result__value mono">{{ formatted().revenue }}</strong>
+      <span class="result__range mono">Rozptyl {{ formatted().revenueRange }}</span>
+    </div>
+
+    <div class="result-grid">
+      <div class="result">
+        <span class="result__label">{{ profile().resultLabel }}</span>
+        <strong class="result__value result__value--md mono">{{ formatted().conversions }}</strong>
+      </div>
+      <div class="result">
+        <span class="result__label">Očakávané PNO</span>
+        <strong class="result__value result__value--md mono" [attr.data-level]="pnoLevel()">{{
+          formatted().pno
+        }}</strong>
+      </div>
+      <div class="result">
+        <span class="result__label">ROAS</span>
+        <strong class="result__value result__value--md mono result__value--growth">{{ formatted().roas }}</strong>
+      </div>
+    </div>
+
+    <p class="estimator__hint" [attr.data-level]="pnoLevel()">
+      <app-icon [name]="pnoLevel() === 'high' ? 'alert' : 'trending-up'" [size]="18" />
+      <span>{{ pnoHint() }}</span>
+    </p>
+
+    <button type="button" class="btn btn--primary btn--lg btn--block" (click)="startProposal()">
+      Chcem dosiahnuť tieto výsledky <app-icon name="arrow-right" [size]="18" />
+    </button>
+    <p class="estimator__disclaimer">
+      Orientačný odhad na základe benchmarkov CTR, konverzného pomeru a ROAS zo slovenského trhu. Presnú projekciu
+      pripravíme po audite vašich dát.
+    </p>
+  </div>
+</div>

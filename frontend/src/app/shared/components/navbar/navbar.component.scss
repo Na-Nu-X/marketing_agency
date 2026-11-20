@@ -1,0 +1,235 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  display: block;
+  color: var(--color-text-on-ink);
+}
+
+.navbar {
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color $duration-base ease,
+    border-color $duration-base ease,
+    color $duration-base ease;
+
+  :host(.is-scrolled) & {
+    background: rgba(250, 249, 246, 0.92);
+    backdrop-filter: saturate(160%) blur(12px);
+    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  :host(.is-open) & {
+    background: var(--color-ink);
+    border-bottom-color: var(--color-ink-line);
+    color: var(--color-text-on-ink);
+  }
+
+  &__inner {
+    @include container;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-5;
+    height: var(--nav-height);
+  }
+
+  &__nav {
+    display: none;
+
+    @include up(lg) {
+      display: block;
+    }
+
+    ul {
+      @include reset-list;
+      display: flex;
+      gap: $space-6;
+    }
+
+    a {
+      position: relative;
+      padding-block: $space-2;
+      font-size: 0.93rem;
+      font-weight: 500;
+      opacity: 0.86;
+      transition: opacity $duration-fast ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: var(--color-accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform $duration-base $ease-out;
+      }
+
+      &:hover,
+      &.is-active {
+        opacity: 1;
+      }
+
+      &:hover::after,
+      &.is-active::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+  }
+
+  &__phone {
+    display: none;
+    align-items: center;
+    gap: $space-2;
+    @include mono-figure;
+    font-size: 0.85rem;
+    opacity: 0.86;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    @include up(xl) {
+      display: inline-flex;
+    }
+  }
+
+  &__cta {
+    display: none;
+    min-height: 44px;
+    padding-block: 0.6rem;
+
+    @include up(md) {
+      display: inline-flex;
+    }
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+
+    @include up(lg) {
+      display: none;
+    }
+  }
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+
+  &__accent {
+    color: var(--color-accent);
+  }
+}
+
+// --- Mobile drawer -------------------------------------------
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--nav-height) + #{$space-6}) $container-gutter $space-6;
+  background: var(--color-ink);
+  color: var(--color-text-on-ink);
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity $duration-base ease,
+    transform $duration-base $ease-out,
+    visibility 0s linear $duration-base;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity $duration-base ease,
+      transform $duration-base $ease-out;
+  }
+
+  @include up(lg) {
+    display: none;
+  }
+
+  &__links {
+    @include reset-list;
+    border-top: 1px solid var(--color-ink-line);
+
+    li {
+      border-bottom: 1px solid var(--color-ink-line);
+      opacity: 0;
+      transform: translateY(10px);
+      transition:
+        opacity $duration-base ease calc(var(--i) * 50ms + 80ms),
+        transform $duration-slow $ease-out calc(var(--i) * 50ms + 80ms);
+    }
+
+    a {
+      display: flex;
+      align-items: baseline;
+      gap: $space-4;
+      padding-block: $space-5;
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 8vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+  }
+
+  &.is-open &__links li {
+    opacity: 1;
+    transform: none;
+  }
+
+  &__index {
+    @include mono-figure;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-accent);
+  }
+
+  &__footer {
+    display: grid;
+    gap: $space-5;
+    margin-top: $space-7;
+  }
+
+  &__contact {
+    display: grid;
+    gap: $space-2;
+    @include mono-figure;
+    font-size: 0.9rem;
+    color: var(--color-text-on-ink-muted);
+  }
+}

@@ -1,0 +1,43 @@
+<article class="card">
+  <header class="card__head">
+    <span class="tag">
+      <app-icon [name]="service().category.icon_name" [size]="14" [strokeWidth]="2" />
+      {{ service().category.name }}
+    </span>
+    @if (number(); as n) {
+      <span class="card__index mono">{{ n }}</span>
+    }
+  </header>
+
+  <h3 class="card__title">
+    <a [routerLink]="['/sluzby', service().slug]">{{ service().name }}</a>
+  </h3>
+  <p class="card__desc">{{ service().short_description }}</p>
+
+  @if (deliverablesPreview().length) {
+    <ul class="card__deliverables" aria-label="Čo zahŕňa">
+      @for (item of deliverablesPreview(); track item) {
+        <li><app-icon name="check" [size]="16" [strokeWidth]="2.25" />{{ item }}</li>
+      }
+    </ul>
+  }
+
+  <ul class="card__tools" aria-label="Nástroje a platformy">
+    @for (tool of tools(); track tool) {
+      <li class="badge">{{ tool }}</li>
+    }
+    @if (hiddenTools() > 0) {
+      <li class="badge">+{{ hiddenTools() }}</li>
+    }
+  </ul>
+
+  <footer class="card__foot">
+    <span class="card__fee">
+      <small>Správa</small>
+      <strong class="mono">{{ fee() }}</strong>
+    </span>
+    <span class="card__more" aria-hidden="true">
+      Detail služby <app-icon name="arrow-right" [size]="16" />
+    </span>
+  </footer>
+</article>

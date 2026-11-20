@@ -1,0 +1,149 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.card {
+  @include card;
+  @include card-hover;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: $space-5;
+
+  @include up(md) {
+    padding: $space-6;
+  }
+
+  &:hover .card__title a {
+    color: var(--color-accent);
+  }
+
+  &:hover .card__more {
+    color: var(--color-accent);
+
+    app-icon {
+      transform: translateX(4px);
+    }
+  }
+
+  &:focus-within {
+    @include focus-ring;
+
+    a:focus-visible {
+      outline: none;
+    }
+  }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $space-3;
+    margin-bottom: $space-5;
+  }
+
+  &__index {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  &__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+
+    a {
+      transition: color $duration-fast ease;
+
+      // Stretched link: the whole card is clickable.
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+    }
+  }
+
+  &__desc {
+    margin-top: $space-3;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    @include line-clamp(3);
+  }
+
+  &__deliverables {
+    @include reset-list;
+    display: grid;
+    gap: $space-2;
+    margin-top: $space-5;
+    padding-top: $space-5;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+
+    li {
+      display: flex;
+      gap: $space-2;
+      align-items: flex-start;
+    }
+
+    app-icon {
+      margin-top: 3px;
+      color: var(--color-growth);
+    }
+  }
+
+  &__tools {
+    @include reset-list;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: $space-5;
+  }
+
+  &__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: $space-3;
+    margin-top: auto;
+    padding-top: $space-5;
+  }
+
+  &__fee {
+    display: grid;
+
+    small {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    strong {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+  }
+
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color $duration-fast ease;
+
+    app-icon {
+      transition: transform $duration-base $ease-out;
+    }
+  }
+}

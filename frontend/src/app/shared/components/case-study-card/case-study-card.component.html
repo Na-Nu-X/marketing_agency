@@ -1,0 +1,51 @@
+<article class="cs">
+  <div class="cs__media">
+    <img [src]="caseStudy().cover_image_url" [alt]="caseStudy().title" loading="lazy" decoding="async" />
+    <span class="cs__sector">{{ caseStudy().client_sector }}</span>
+  </div>
+
+  <div class="cs__body">
+    <div class="cs__meta">
+      <span class="tag">{{ caseStudy().category.name }}</span>
+      @if (caseStudy().duration_label) {
+        <span class="cs__duration mono"><app-icon name="clock" [size]="14" /> {{ caseStudy().duration_label }}</span>
+      }
+    </div>
+
+    <h3 class="cs__title">{{ caseStudy().title }}</h3>
+
+    <dl class="cs__kpis">
+      @for (kpi of visibleKpis(); track kpi.label) {
+        <div class="cs__kpi">
+          <dt>{{ kpi.label }}</dt>
+          <dd class="mono" [class.text-growth]="kpi.growth">{{ kpi.value }}</dd>
+        </div>
+      }
+    </dl>
+
+    @if (variant() === 'full') {
+      <div class="cs__story">
+        <div>
+          <h4><span class="cs__step mono">01</span> Výzva</h4>
+          <p>{{ caseStudy().challenge_summary }}</p>
+        </div>
+        <div>
+          <h4><span class="cs__step mono">02</span> Realizovaná stratégia</h4>
+          <p>{{ caseStudy().strategy_executed }}</p>
+        </div>
+      </div>
+    }
+
+    <ul class="cs__channels" aria-label="Použité kanály">
+      @for (channel of caseStudy().channels_used; track channel) {
+        <li class="badge">{{ channel }}</li>
+      }
+    </ul>
+
+    @if (variant() === 'compact') {
+      <a class="cs__link link-arrow" routerLink="/pripadove-studie" [fragment]="caseStudy().slug">
+        Celá prípadová štúdia <app-icon name="arrow-right" [size]="16" />
+      </a>
+    }
+  </div>
+</article>
