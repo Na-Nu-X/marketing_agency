@@ -1,0 +1,246 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.hero-skeleton {
+  display: grid;
+  gap: $space-4;
+
+  .skeleton {
+    display: block;
+    opacity: 0.12;
+  }
+}
+
+.skeleton--line-sm {
+  width: 160px;
+  height: 14px;
+}
+
+.skeleton--line-lg {
+  width: min(720px, 100%);
+  height: 64px;
+}
+
+.skeleton--line-md {
+  width: min(520px, 100%);
+  height: 20px;
+}
+
+.hero-action {
+  margin-top: $space-6;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-5;
+  @include eyebrow;
+  color: var(--color-text-on-ink-muted);
+
+  a:hover {
+    color: var(--color-accent);
+  }
+}
+
+.hero-grid {
+  display: grid;
+  gap: $space-6;
+
+  @include up(lg) {
+    grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+    align-items: end;
+    gap: $space-8;
+  }
+}
+
+.price-box {
+  display: grid;
+  gap: $space-2;
+  padding: $space-5;
+  border: 1px solid var(--color-ink-line);
+  border-radius: var(--radius-md);
+  background: rgba(250, 249, 246, 0.04);
+
+  @include up(md) {
+    padding: $space-6;
+  }
+
+  &__label {
+    @include eyebrow;
+    color: var(--color-text-on-ink-muted);
+  }
+
+  &__value {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--color-text-on-ink);
+  }
+
+  &__note {
+    margin-bottom: $space-3;
+    font-size: 0.85rem;
+    color: var(--color-text-on-ink-muted);
+  }
+}
+
+// ---------- Dossier body ----------
+.dossier {
+  display: grid;
+  gap: $space-7;
+
+  @include up(lg) {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+  }
+
+  &__main {
+    display: grid;
+    gap: $space-7;
+  }
+
+  &__aside {
+    @include up(lg) {
+      position: sticky;
+      top: calc(var(--nav-height) + #{$space-5});
+    }
+  }
+}
+
+.block {
+  &__title {
+    display: flex;
+    align-items: baseline;
+    gap: $space-3;
+    margin-bottom: $space-5;
+    padding-bottom: $space-4;
+    border-bottom: 1px solid var(--color-border);
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+
+    .mono {
+      font-size: 0.85rem;
+      color: var(--color-accent);
+    }
+  }
+
+  &__text {
+    max-width: 68ch;
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+
+    & + & {
+      margin-top: $space-4;
+    }
+  }
+}
+
+.block-grid {
+  display: grid;
+  gap: $space-7;
+
+  @include up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.fit-list,
+.metrics-list {
+  @include reset-list;
+  display: grid;
+  gap: $space-3;
+
+  li {
+    display: flex;
+    gap: $space-3;
+    align-items: flex-start;
+  }
+
+  app-icon {
+    margin-top: 2px;
+    color: var(--color-accent);
+  }
+}
+
+.metrics-list app-icon {
+  color: var(--color-growth);
+}
+
+.fit-list li {
+  padding: $space-4;
+  @include card;
+}
+
+.checklist {
+  @include reset-list;
+  display: grid;
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  @include up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  li {
+    display: flex;
+    gap: $space-3;
+    align-items: flex-start;
+    padding: $space-4 $space-5;
+    background: var(--color-surface);
+    font-weight: 500;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-growth-soft);
+    color: var(--color-growth);
+  }
+}
+
+.tools {
+  @include reset-list;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+
+  .badge {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.82rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+}
+
+.aside-card {
+  @include card;
+  display: grid;
+  gap: $space-4;
+  padding: $space-6;
+
+  &__list {
+    @include reset-list;
+    display: grid;
+    gap: $space-2;
+    margin-bottom: $space-2;
+    font-size: 0.92rem;
+
+    li {
+      display: flex;
+      gap: $space-2;
+      align-items: center;
+    }
+
+    app-icon {
+      color: var(--color-growth);
+    }
+  }
+}

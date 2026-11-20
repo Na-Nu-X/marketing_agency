@@ -1,0 +1,127 @@
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Služby</p>
+    <h1 class="display-xl">Riešenia, ktoré <span class="text-accent">predávajú.</span></h1>
+    <p class="lead">
+      Performance kampane, SEO, sociálne siete, branding, weby aj e-mail marketing. Každá služba má jasné výstupy,
+      merateľné KPI a transparentnú cenu správy.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="toolbar">
+      <div class="toolbar__search">
+        <label class="visually-hidden" for="service-search">Hľadať službu alebo nástroj</label>
+        <app-icon name="search" [size]="18" />
+        <input
+          id="service-search"
+          class="input"
+          type="search"
+          placeholder="Hľadať službu alebo nástroj (napr. Google Ads, Klaviyo)…"
+          autocomplete="off"
+          [value]="search()"
+          (input)="onSearch($event)"
+        />
+      </div>
+      <div class="toolbar__sort">
+        <label for="service-ordering">Zoradiť</label>
+        <select id="service-ordering" class="select" [value]="ordering()" (change)="onOrdering($event)">
+          @for (option of orderingOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="chip-row filters" role="group" aria-label="Filtrovať podľa kategórie">
+      <button type="button" class="chip" [attr.aria-pressed]="!category()" (click)="selectCategory(null)">
+        Všetky služby
+        @if (totalServices()) {
+          <span class="count">{{ totalServices() }}</span>
+        }
+      </button>
+      @for (cat of categories.data(); track cat.id) {
+        <button
+          type="button"
+          class="chip"
+          [attr.aria-pressed]="category() === cat.slug"
+          (click)="selectCategory(cat.slug)"
+        >
+          <app-icon [name]="cat.icon_name" [size]="16" />
+          {{ cat.name }}
+          <span class="count">{{ cat.service_count }}</span>
+        </button>
+      }
+    </div>
+
+    @if (activeCategory(); as cat) {
+      <p class="category-summary">
+        <strong>{{ cat.name }}:</strong> {{ cat.short_summary }}
+      </p>
+    }
+
+    <div class="results-bar" aria-live="polite">
+      @if (services.state().status === 'success') {
+        <p>Zobrazujeme <strong class="mono">{{ resultLabel() }}</strong></p>
+      }
+      @if (hasFilters()) {
+        <button type="button" class="reset" (click)="resetFilters()">
+          <app-icon name="close" [size]="14" /> Zrušiť filtre
+        </button>
+      }
+    </div>
+
+    @switch (services.state().status) {
+      @case ('loading') {
+        <div class="grid grid--3">
+          @for (s of [0, 1, 2, 3, 4, 5]; track s) {
+            <div class="skeleton skeleton--card"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="state-box">
+          <p>Služby sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znova.</p>
+          <button type="button" class="btn btn--outline" (click)="services.reload()">
+            <app-icon name="refresh" [size]="16" /> Skúsiť znova
+          </button>
+        </div>
+      }
+      @case ('success') {
+        @if (services.data()?.length) {
+          <div class="grid grid--3">
+            @for (service of services.data(); track service.id) {
+              <app-service-card [service]="service" />
+            }
+          </div>
+        } @else {
+          <div class="state-box">
+            <h2 class="display-sm">Nenašli sme žiadnu službu</h2>
+            <p>Skúste upraviť vyhľadávanie alebo nám napíšte – riešenie na mieru pripravíme aj pre netradičné zadania.</p>
+            <div class="state-actions">
+              <button type="button" class="btn btn--outline" (click)="resetFilters()">Zobraziť všetky služby</button>
+              <a class="btn btn--primary" routerLink="/kontakt">Nezáväzná ponuka</a>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</section>
+
+<section class="section section--soft">
+  <div class="container cta-strip">
+    <div>
+      <h2 class="display-md">Neviete, ktorú službu potrebujete?</h2>
+      <p class="lead">
+        Pošlite nám web alebo profil. Senior špecialista vám do 48 hodín pripraví bezplatný mini-audit s konkrétnymi
+        odporúčaniami.
+      </p>
+    </div>
+    <a class="btn btn--primary btn--lg" routerLink="/kontakt" [queryParams]="{ tab: 'audit' }">
+      Chcem bezplatný audit <app-icon name="arrow-right" [size]="18" />
+    </a>
+  </div>
+</section>

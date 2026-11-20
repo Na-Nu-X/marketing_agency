@@ -1,0 +1,172 @@
+@switch (service.state().status) {
+  @case ('loading') {
+    <section class="page-hero">
+      <div class="container">
+        <div class="hero-skeleton">
+          <span class="skeleton skeleton--line-sm"></span>
+          <span class="skeleton skeleton--line-lg"></span>
+          <span class="skeleton skeleton--line-md"></span>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('error') {
+    <section class="page-hero">
+      <div class="container">
+        @if (service.notFound()) {
+          <p class="eyebrow">404</p>
+          <h1 class="display-lg">Túto službu sme nenašli</h1>
+          <p class="lead">Služba mohla byť premenovaná alebo zrušená. Pozrite si aktuálnu ponuku.</p>
+          <a class="btn btn--primary btn--lg hero-action" routerLink="/sluzby">Všetky služby</a>
+        } @else {
+          <h1 class="display-lg">Službu sa nepodarilo načítať</h1>
+          <p class="lead">Skontrolujte pripojenie a skúste to znova.</p>
+          <button type="button" class="btn btn--primary btn--lg hero-action" (click)="service.reload()">
+            <app-icon name="refresh" [size]="18" /> Skúsiť znova
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  @case ('success') {
+    @if (service.data(); as s) {
+      <section class="page-hero">
+        <div class="container">
+          <nav class="breadcrumb" aria-label="Omrvinková navigácia">
+            <a routerLink="/sluzby">Služby</a>
+            <span aria-hidden="true">/</span>
+            <a routerLink="/sluzby" [queryParams]="{ kategoria: s.category.slug }">{{ s.category.name }}</a>
+          </nav>
+          <div class="hero-grid">
+            <div>
+              <h1 class="display-lg">{{ s.name }}</h1>
+              <p class="lead">{{ s.short_description }}</p>
+            </div>
+            <div class="price-box">
+              <span class="price-box__label">{{ hasFee() ? 'Mesačná správa' : 'Cena projektu' }}</span>
+              <strong class="price-box__value mono">{{ fee() }}</strong>
+              <span class="price-box__note">Bez viazanosti · výpovedná lehota 30 dní</span>
+              <a class="btn btn--primary btn--lg btn--block" routerLink="/kontakt" [queryParams]="{ service: s.slug }">
+                Mám záujem o túto službu <app-icon name="arrow-right" [size]="18" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container dossier">
+          <div class="dossier__main">
+            <article class="block">
+              <h2 class="block__title"><span class="mono">01</span> O službe</h2>
+              @for (paragraph of paragraphs(); track $index) {
+                <p class="block__text">{{ paragraph }}</p>
+              }
+            </article>
+
+            @if (s.ideal_for.length) {
+              <article class="block">
+                <h2 class="block__title"><span class="mono">02</span> Pre koho je služba ideálna</h2>
+                <ul class="fit-list">
+                  @for (item of s.ideal_for; track item) {
+                    <li><app-icon name="target" [size]="20" /> {{ item }}</li>
+                  }
+                </ul>
+              </article>
+            }
+
+            <article class="block">
+              <h2 class="block__title"><span class="mono">03</span> Čo všetko pre vás zabezpečíme</h2>
+              <ul class="checklist">
+                @for (item of s.deliverables; track item) {
+                  <li>
+                    <span class="checklist__icon"><app-icon name="check" [size]="16" [strokeWidth]="2.5" /></span>
+                    {{ item }}
+                  </li>
+                }
+              </ul>
+            </article>
+
+            <div class="block-grid">
+              <article class="block">
+                <h2 class="block__title"><span class="mono">04</span> Nástroje a analytika</h2>
+                <ul class="tools">
+                  @for (tool of s.tools_used; track tool) {
+                    <li class="badge">{{ tool }}</li>
+                  }
+                </ul>
+              </article>
+
+              @if (s.success_metrics.length) {
+                <article class="block">
+                  <h2 class="block__title"><span class="mono">05</span> Ako meriame úspech</h2>
+                  <ul class="metrics-list">
+                    @for (metric of s.success_metrics; track metric) {
+                      <li><app-icon name="trending-up" [size]="18" /> {{ metric }}</li>
+                    }
+                  </ul>
+                </article>
+              }
+            </div>
+          </div>
+
+          <aside class="dossier__aside">
+            <div class="aside-card">
+              <p class="eyebrow eyebrow--accent">Ďalší krok</p>
+              <h2 class="display-sm">Pripravíme vám ponuku na mieru do 48 hodín</h2>
+              <ul class="aside-card__list">
+                <li><app-icon name="check" [size]="16" /> Úvodná konzultácia zdarma</li>
+                <li><app-icon name="check" [size]="16" /> Návrh stratégie a odhad výsledkov</li>
+                <li><app-icon name="check" [size]="16" /> Transparentná cena bez skrytých poplatkov</li>
+              </ul>
+              <a class="btn btn--primary btn--block" routerLink="/kontakt" [queryParams]="{ service: s.slug }">
+                Mám záujem o túto službu
+              </a>
+              <a class="btn btn--outline btn--block" routerLink="/kontakt" [queryParams]="{ tab: 'audit' }">
+                Najprv bezplatný audit
+              </a>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      @if (relatedCaseStudies.data()?.length) {
+        <section class="section section--soft">
+          <div class="container">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow eyebrow--accent">Výsledky v praxi</p>
+                <h2 class="display-md">Prípadové štúdie z oblasti {{ s.category.name }}</h2>
+              </div>
+            </div>
+            <div class="grid grid--2">
+              @for (cs of relatedCaseStudies.data(); track cs.id) {
+                <app-case-study-card [caseStudy]="cs" />
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (siblingServices.data()?.length) {
+        <section class="section">
+          <div class="container">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow eyebrow--accent">Súvisiace služby</p>
+                <h2 class="display-md">Skvelo sa dopĺňa s</h2>
+              </div>
+            </div>
+            <div class="grid grid--3">
+              @for (sibling of siblingServices.data(); track sibling.id) {
+                <app-service-card [service]="sibling" />
+              }
+            </div>
+          </div>
+        </section>
+      }
+    }
+  }
+}
