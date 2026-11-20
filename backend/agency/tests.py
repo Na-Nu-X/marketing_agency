@@ -65,3 +65,28 @@ class ApiTests(TestCase):
     def test_leads_are_not_listable(self):
         self.assertEqual(self.client.get("/api/proposals/").status_code, 405)
         self.assertEqual(self.client.get("/api/audits/").status_code, 405)
+
+
+class AdminSmokeTests(TestCase):
+    """Every agency admin changelist, add form and change form renders."""
+
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_data", verbosity=0)
+        from django.contrib.auth import get_user_model
+
+        cls.admin = get_user_model().objects.create_superuser("riaditel", "r@example.com", "test-pass-123")
+
+    def test_admin_pages_render(self):
+        from django.contrib import admin
+
+        self.client.force_login(self.admin)
+        for model in admin.site._registry:
+            if model._meta.app_label != "agency":
+                continue
+            base = f"/admin/agency/{model._meta.model_name}/"
+            for url in (base, f"{base}add/"):
+                self.assertEqual(self.client.get(url).status_code, 200, url)
+            obj = model.objects.first()
+            if obj:
+                self.assertEqual(self.client.get(f"{base}{obj.pk}/change/").status_code, 200)
