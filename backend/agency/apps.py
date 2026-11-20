@@ -2,4 +2,6 @@ from django.apps import AppConfig
 
 
 class AgencyConfig(AppConfig):
-    name = 'agency'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "agency"
+    verbose_name = "Agentúra – obsah a dopyty"
