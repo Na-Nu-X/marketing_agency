@@ -1,0 +1,367 @@
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Kontakt</p>
+    <h1 class="display-xl">Poďme rozbehnúť <span class="text-accent">váš rast.</span></h1>
+    <p class="lead">
+      Vyberte si: nezáväzná cenová ponuka na mieru, alebo rýchly bezplatný mini-audit vašich kampaní, webu či
+      sociálnych sietí. {{ site.contact.responseTime }}
+    </p>
+  </div>
+</section>
+
+<section class="section conversion">
+  <div class="container conversion__grid">
+    <div class="panel">
+      <div class="tabs" role="tablist" aria-label="Typ dopytu" (keydown)="onTabKeydown($event)">
+        <button
+          id="tab-ponuka"
+          type="button"
+          role="tab"
+          class="tabs__tab"
+          aria-controls="panel-ponuka"
+          [attr.aria-selected]="activeTab() === 'ponuka'"
+          [attr.tabindex]="activeTab() === 'ponuka' ? 0 : -1"
+          (click)="selectTab('ponuka')"
+        >
+          <span class="tabs__num mono">01</span>
+          <span class="tabs__text">
+            <strong>Nezáväzná cenová ponuka</strong>
+            <small>Stratégia a cena na mieru do 48 h</small>
+          </span>
+        </button>
+        <button
+          id="tab-audit"
+          type="button"
+          role="tab"
+          class="tabs__tab"
+          aria-controls="panel-audit"
+          [attr.aria-selected]="activeTab() === 'audit'"
+          [attr.tabindex]="activeTab() === 'audit' ? 0 : -1"
+          (click)="selectTab('audit')"
+        >
+          <span class="tabs__num mono">02</span>
+          <span class="tabs__text">
+            <strong>Bezplatný mini-audit</strong>
+            <small>Vyplníte za 30 sekúnd</small>
+          </span>
+        </button>
+      </div>
+
+      <!-- ================= TAB 1: PROPOSAL ================= -->
+      <div id="panel-ponuka" role="tabpanel" aria-labelledby="tab-ponuka" class="panel__body" [hidden]="activeTab() !== 'ponuka'">
+        @if (proposalState() === 'success') {
+          <div class="success" role="status">
+            <span class="success__icon"><app-icon name="check" [size]="32" [strokeWidth]="2.5" /></span>
+            <h2 class="display-md">Ďakujeme{{ submittedName() ? ', ' + submittedName() : '' }}!</h2>
+            <p class="lead">
+              Váš dopyt sme prijali. Senior stratég sa vám ozve do 24 hodín v pracovných dňoch a dohodne krátky
+              úvodný hovor.
+            </p>
+            <ol class="success__steps">
+              <li><span class="mono">01</span> Analyzujeme váš web a dostupné dáta</li>
+              <li><span class="mono">02</span> 30-minútový úvodný hovor o cieľoch</li>
+              <li><span class="mono">03</span> Návrh stratégie, odhad výsledkov a cena do 48 h</li>
+            </ol>
+            <div class="success__actions">
+              <a class="btn btn--primary" routerLink="/pripadove-studie">Pozrieť prípadové štúdie</a>
+              <button type="button" class="btn btn--outline" (click)="resetProposal()">Odoslať ďalší dopyt</button>
+            </div>
+          </div>
+        } @else {
+          <form class="form" [formGroup]="proposalForm" (ngSubmit)="submitProposal()" novalidate>
+            @if (prefilledFromEstimator()) {
+              <p class="prefill-note">
+                <app-icon name="zap" [size]="18" />
+                Údaje sme predvyplnili podľa vašej kalkulácie. Stačí doplniť kontakt.
+              </p>
+            }
+
+            <!-- Services -->
+            <fieldset class="form__section">
+              <legend class="form__legend">
+                <span class="mono">A</span> O ktoré služby máte záujem?
+                <span class="form__counter mono">{{ selectedSlugs().length }} vybrané</span>
+              </legend>
+              @if (services.loading()) {
+                <div class="chip-row">
+                  @for (s of [0, 1, 2, 3, 4]; track s) {
+                    <span class="skeleton skeleton--chip"></span>
+                  }
+                </div>
+              } @else if (services.error()) {
+                <p class="field-error">
+                  Zoznam služieb sa nepodarilo načítať.
+                  <button type="button" class="inline-link" (click)="services.reload()">Skúsiť znova</button>
+                </p>
+              } @else {
+                <div
+                  class="service-groups"
+                  tabindex="-1"
+                  [attr.aria-invalid]="invalid(proposalForm, 'selectedServices')"
+                  aria-describedby="services-error"
+                >
+                  @for (group of serviceGroups(); track group.category) {
+                    <div class="service-group">
+                      <p class="service-group__title">{{ group.category }}</p>
+                      <div class="chip-row">
+                        @for (service of group.services; track service.id) {
+                          <button
+                            type="button"
+                            class="chip"
+                            [attr.aria-pressed]="isSelected(service.slug)"
+                            (click)="toggleService(service.slug)"
+                          >
+                            @if (isSelected(service.slug)) {
+                              <app-icon name="check" [size]="16" [strokeWidth]="2.5" />
+                            }
+                            {{ service.name }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+              @if (errorFor(proposalForm, 'selectedServices'); as error) {
+                <p id="services-error" class="field-error">{{ error }}</p>
+              }
+            </fieldset>
+
+            <!-- Budget -->
+            <fieldset class="form__section">
+              <legend class="form__legend"><span class="mono">B</span> Plánovaný mesačný rozpočet na reklamu</legend>
+              <div class="radio-cards" [attr.aria-invalid]="invalid(proposalForm, 'monthlyAdBudget')">
+                @for (option of budgetOptions; track option.value; let first = $first) {
+                  <label class="radio-card">
+                    <input
+                      type="radio"
+                      formControlName="monthlyAdBudget"
+                      [value]="option.value"
+                      [class.is-invalid]="first && invalid(proposalForm, 'monthlyAdBudget')"
+                    />
+                    <span class="radio-card__label mono">{{ option.label }}</span>
+                  </label>
+                }
+              </div>
+              @if (errorFor(proposalForm, 'monthlyAdBudget'); as error) {
+                <p class="field-error">{{ error }}</p>
+              }
+            </fieldset>
+
+            <!-- Contact & goals -->
+            <fieldset class="form__section">
+              <legend class="form__legend"><span class="mono">C</span> Kontaktné údaje a ciele</legend>
+              <div class="form__grid">
+                <div class="field">
+                  <label for="p-company">Spoločnosť</label>
+                  <input id="p-company" class="input" formControlName="companyName" autocomplete="organization" [class.is-invalid]="invalid(proposalForm, 'companyName')" />
+                  @if (errorFor(proposalForm, 'companyName'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="p-web">Web / e-shop <span class="optional">(nepovinné)</span></label>
+                  <input id="p-web" class="input" formControlName="websiteUrl" inputmode="url" placeholder="www.vasa-firma.sk" [class.is-invalid]="invalid(proposalForm, 'websiteUrl')" />
+                  @if (errorFor(proposalForm, 'websiteUrl'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="p-name">Meno a priezvisko</label>
+                  <input id="p-name" class="input" formControlName="contactName" autocomplete="name" [class.is-invalid]="invalid(proposalForm, 'contactName')" />
+                  @if (errorFor(proposalForm, 'contactName'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="p-phone">Telefón</label>
+                  <input id="p-phone" class="input" type="tel" formControlName="phone" autocomplete="tel" placeholder="+421 900 123 456" [class.is-invalid]="invalid(proposalForm, 'phone')" />
+                  @if (errorFor(proposalForm, 'phone'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field field--full">
+                  <label for="p-email">E-mail</label>
+                  <input id="p-email" class="input" type="email" formControlName="email" autocomplete="email" placeholder="meno@firma.sk" [class.is-invalid]="invalid(proposalForm, 'email')" />
+                  @if (errorFor(proposalForm, 'email'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field field--full">
+                  <label for="p-goals">Čo chcete dosiahnuť?</label>
+                  <textarea
+                    id="p-goals"
+                    class="textarea"
+                    formControlName="projectGoals"
+                    rows="5"
+                    placeholder="Napr. chceme do konca roka zdvojnásobiť tržby e-shopu pri PNO do 15 %…"
+                    [class.is-invalid]="invalid(proposalForm, 'projectGoals')"
+                  ></textarea>
+                  @if (errorFor(proposalForm, 'projectGoals'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  } @else {
+                    <p class="field-hint">Ciele v číslach (tržby, PNO, počet leadov) nám pomôžu pripraviť presnejšiu ponuku.</p>
+                  }
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="honeypot" aria-hidden="true">
+              <label for="p-fax">Fax</label>
+              <input id="p-fax" formControlName="companyFax" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <label class="consent">
+              <input type="checkbox" formControlName="consent" [class.is-invalid]="invalid(proposalForm, 'consent')" />
+              <span>Súhlasím so spracovaním osobných údajov na účel prípravy ponuky. {{ site.gdprNotice }}</span>
+            </label>
+            @if (errorFor(proposalForm, 'consent'); as error) {
+              <p class="field-error">{{ error }}</p>
+            }
+
+            @if (proposalError(); as error) {
+              <div class="form-alert form-alert--error" role="alert">
+                <app-icon name="alert" [size]="18" /> <span>{{ error }}</span>
+              </div>
+            }
+
+            <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="proposalState() === 'submitting'">
+              @if (proposalState() === 'submitting') {
+                <span class="spinner" aria-hidden="true"></span> Odosielame…
+              } @else {
+                Odoslať nezáväzný dopyt <app-icon name="arrow-right" [size]="18" />
+              }
+            </button>
+          </form>
+        }
+      </div>
+
+      <!-- ================= TAB 2: AUDIT ================= -->
+      <div id="panel-audit" role="tabpanel" aria-labelledby="tab-audit" class="panel__body" [hidden]="activeTab() !== 'audit'">
+        @if (auditState() === 'success') {
+          <div class="success" role="status">
+            <span class="success__icon"><app-icon name="check" [size]="32" [strokeWidth]="2.5" /></span>
+            <h2 class="display-md">Audit je v príprave{{ submittedName() ? ', ' + submittedName() : '' }}!</h2>
+            <p class="lead">
+              Senior špecialista prejde váš web alebo profil a do 48 hodín vám pošle video alebo PDF audit s
+              konkrétnymi odporúčaniami. Bez záväzkov.
+            </p>
+            <div class="success__actions">
+              <a class="btn btn--primary" routerLink="/sluzby">Prezrieť služby</a>
+              <button type="button" class="btn btn--outline" (click)="resetAudit()">Požiadať o ďalší audit</button>
+            </div>
+          </div>
+        } @else {
+          <form class="form" [formGroup]="auditForm" (ngSubmit)="submitAudit()" novalidate>
+            <fieldset class="form__section">
+              <legend class="form__legend"><span class="mono">A</span> Čo chcete skontrolovať?</legend>
+              <div class="audit-options">
+                @for (option of auditOptions; track option.value) {
+                  <label class="audit-option">
+                    <input type="radio" formControlName="auditType" [value]="option.value" />
+                    <span class="audit-option__box">
+                      <strong>{{ option.label }}</strong>
+                      <small>{{ option.hint }}</small>
+                    </span>
+                  </label>
+                }
+              </div>
+            </fieldset>
+
+            <fieldset class="form__section">
+              <legend class="form__legend"><span class="mono">B</span> Kam sa máme pozrieť a kam poslať výsledok?</legend>
+              <div class="form__grid">
+                <div class="field field--full">
+                  <label for="a-url">Web, e-shop alebo profil na sociálnej sieti</label>
+                  <input id="a-url" class="input" formControlName="websiteOrProfileUrl" placeholder="www.vas-eshop.sk alebo @vasaznacka" [class.is-invalid]="invalid(auditForm, 'websiteOrProfileUrl')" />
+                  @if (errorFor(auditForm, 'websiteOrProfileUrl'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="a-name">Meno</label>
+                  <input id="a-name" class="input" formControlName="contactName" autocomplete="name" [class.is-invalid]="invalid(auditForm, 'contactName')" />
+                  @if (errorFor(auditForm, 'contactName'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+                <div class="field">
+                  <label for="a-email">E-mail</label>
+                  <input id="a-email" class="input" type="email" formControlName="email" autocomplete="email" [class.is-invalid]="invalid(auditForm, 'email')" />
+                  @if (errorFor(auditForm, 'email'); as error) {
+                    <p class="field-error">{{ error }}</p>
+                  }
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="honeypot" aria-hidden="true">
+              <label for="a-fax">Fax</label>
+              <input id="a-fax" formControlName="companyFax" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <label class="consent">
+              <input type="checkbox" formControlName="consent" [class.is-invalid]="invalid(auditForm, 'consent')" />
+              <span>Súhlasím so spracovaním osobných údajov na účel vypracovania auditu. {{ site.gdprNotice }}</span>
+            </label>
+            @if (errorFor(auditForm, 'consent'); as error) {
+              <p class="field-error">{{ error }}</p>
+            }
+
+            @if (auditError(); as error) {
+              <div class="form-alert form-alert--error" role="alert">
+                <app-icon name="alert" [size]="18" /> <span>{{ error }}</span>
+              </div>
+            }
+
+            <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="auditState() === 'submitting'">
+              @if (auditState() === 'submitting') {
+                <span class="spinner" aria-hidden="true"></span> Odosielame…
+              } @else {
+                Chcem bezplatný audit <app-icon name="arrow-right" [size]="18" />
+              }
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+
+    <!-- ================= ASIDE ================= -->
+    <aside class="aside">
+      <div class="aside__card aside__card--ink">
+        <p class="eyebrow">Priamy kontakt</p>
+        <a class="aside__phone mono" [href]="'tel:' + site.contact.phoneHref">{{ site.contact.phone }}</a>
+        <a class="aside__email" [href]="'mailto:' + site.contact.newBusinessEmail">{{ site.contact.newBusinessEmail }}</a>
+        <ul class="aside__meta">
+          <li><app-icon name="clock" [size]="16" /> {{ site.contact.officeHours }}</li>
+          <li>
+            <app-icon name="map-pin" [size]="16" />
+            <a [href]="site.address.mapUrl" target="_blank" rel="noopener">
+              {{ site.address.street }}, {{ site.address.postalCode }} {{ site.address.city }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="aside__card">
+        <h2 class="aside__title">Čo bude nasledovať</h2>
+        <ol class="aside__steps">
+          <li><span class="mono">01</span> Do 24 h sa vám ozve senior špecialista – nie obchodník.</li>
+          <li><span class="mono">02</span> Krátky hovor o cieľoch, marži a doterajších výsledkoch.</li>
+          <li><span class="mono">03</span> Návrh stratégie s odhadom výsledkov a transparentnou cenou.</li>
+        </ol>
+      </div>
+
+      <ul class="aside__partners" aria-label="Partnerské certifikácie">
+        @for (partner of site.partners; track partner.name) {
+          <li><app-icon name="award" [size]="18" /> <strong>{{ partner.name }}</strong></li>
+        }
+      </ul>
+
+      <p class="aside__legal">
+        {{ site.legal.companyName }} · IČO <span class="mono">{{ site.legal.ico }}</span> · DIČ
+        <span class="mono">{{ site.legal.dic }}</span>
+      </p>
+    </aside>
+  </div>
+</section>
