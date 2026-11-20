@@ -1,0 +1,75 @@
+// ============================================================
+// Design tokens (SCSS). Runtime theming happens through the CSS
+// custom properties emitted in `styles.scss` (`:root`), so a
+// rebrand only needs new values here or a `:root` override.
+// ============================================================
+
+// --- Brand palette -----------------------------------------
+$color-bg: #faf9f6; // Warm Editorial Alabaster
+$color-surface-soft: #f2f0eb; // Warm Stone
+$color-surface: #ffffff; // Cards & panels
+$color-border: #e4e2dd;
+$color-border-strong: #cfccc4;
+
+$color-ink: #111318; // Deep Editorial Ink
+$color-ink-soft: #1c1f26;
+$color-ink-line: #2a2e37;
+$color-text: #111318;
+$color-text-muted: #525660;
+$color-text-on-ink: #faf9f6;
+$color-text-on-ink-muted: #a9adb6;
+
+$color-accent: #e63946; // Vibrant Agency Vermilion
+$color-accent-hover: #c82835;
+$color-accent-soft: #fdecee;
+
+$color-growth: #059669; // Growth Emerald
+$color-growth-on-ink: #34d399;
+$color-growth-soft: #e7f6f0;
+
+$color-danger: #b42318;
+$color-focus: #e63946;
+
+// --- Typography --------------------------------------------
+$font-display: 'Syne', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+$font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+$font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+// --- Spacing scale (4px base) --------------------------------
+$space-1: 0.25rem;
+$space-2: 0.5rem;
+$space-3: 0.75rem;
+$space-4: 1rem;
+$space-5: 1.5rem;
+$space-6: 2rem;
+$space-7: 3rem;
+$space-8: 4rem;
+$space-9: 6rem;
+$space-10: 8rem;
+
+// --- Layout --------------------------------------------------
+$container-max: 1280px;
+$container-gutter: 1rem;
+$container-gutter-lg: 2rem;
+$nav-height: 72px;
+
+$radius-sm: 2px;
+$radius-md: 4px;
+$radius-pill: 999px;
+
+// --- Breakpoints (mobile-first) ------------------------------
+$breakpoints: (
+  sm: 576px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+// --- Motion & elevation --------------------------------------
+$ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+$duration-fast: 160ms;
+$duration-base: 260ms;
+$duration-slow: 600ms;
+
+$shadow-raise: 0 1px 0 rgba(17, 19, 24, 0.04), 0 18px 40px -24px rgba(17, 19, 24, 0.28);
+$shadow-pop: 0 24px 60px -28px rgba(17, 19, 24, 0.45);
